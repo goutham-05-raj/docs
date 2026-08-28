@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Ticket Booking — Pega Blueprint Submission — Goutham Raj</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 12pt;
+      background: #d0d0d0;
+      color: #000;
+    }
+
+    /* ─── Page Container ───────────────────────────────────────────────────── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 20px auto;
+      background: #fff;
+      padding: 2.5cm 2.5cm 3cm 2.5cm;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      position: relative;
+    }
+
+    /* ─── Running Header ───────────────────────────────────────────────────── */
+    .running-header {
+      border-bottom: 1.5px solid #1a3a6e;
+      padding-bottom: 6px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .running-header .doc-title {
+      font-family: Arial, sans-serif;
+      font-size: 9pt;
+      color: #1a3a6e;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+    }
+    .running-header .doc-id {
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #555;
+    }
+
+    /* ─── Running Footer ───────────────────────────────────────────────────── */
+    .running-footer {
+      border-top: 1px solid #ccc;
+      margin-top: 24px;
+      padding-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .running-footer span {
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #555;
+    }
+
+    /* ─── Instructions Banner ──────────────────────────────────────────────── */
+    .instructions-banner {
+      background: #fffbe6;
+      border: 1.5px solid #e6c800;
+      border-left: 5px solid #e6c800;
+      border-radius: 3px;
+      padding: 12px 16px;
+      margin-bottom: 28px;
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+    }
+    .instructions-banner strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #7a6000;
+      font-size: 10.5pt;
+    }
+    .instructions-banner p { color: #5a4800; line-height: 1.6; }
+
+    /* ─── Cover / Title Block ──────────────────────────────────────────────── */
+    .cover-block {
+      text-align: center;
+      padding: 30px 0 24px;
+      border-bottom: 2px solid #1a3a6e;
+      margin-bottom: 30px;
+    }
+    .cover-block .univ-label {
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+      color: #555;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .cover-block h1 {
+      font-family: Arial, sans-serif;
+      font-size: 22pt;
+      font-weight: 700;
+      color: #1a3a6e;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .cover-block h2 {
+      font-family: Arial, sans-serif;
+      font-size: 13pt;
+      font-weight: 400;
+      color: #333;
+      margin-bottom: 24px;
+    }
+    .cover-meta-table {
+      display: inline-block;
+      text-align: left;
+      margin: 0 auto;
+    }
+    .cover-meta-table table {
+      border-collapse: collapse;
+    }
+    .cover-meta-table td {
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+      padding: 4px 18px 4px 0;
+    }
+    .cover-meta-table td:first-child {
+      font-weight: bold;
+      color: #1a3a6e;
+      white-space: nowrap;
+    }
+
+    /* ─── Section Headings ─────────────────────────────────────────────────── */
+    .section-heading {
+      font-family: Arial, sans-serif;
+      font-size: 14pt;
+      font-weight: 700;
+      color: #1a3a6e;
+      border-bottom: 2px solid #1a3a6e;
+      padding-bottom: 5px;
+      margin: 28px 0 14px 0;
+    }
+    .sub-heading {
+      font-family: Arial, sans-serif;
+      font-size: 11.5pt;
+      font-weight: 700;
+      color: #1a3a6e;
+      margin: 18px 0 8px 0;
+    }
+
+    /* ─── Body Text ────────────────────────────────────────────────────────── */
+    p { line-height: 1.7; margin-bottom: 10px; }
+
+    /* ─── Info Table ───────────────────────────────────────────────────────── */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 11pt;
+    }
+    .info-table th {
+      background: #1a3a6e;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 10.5pt;
+      font-weight: 600;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .info-table td {
+      padding: 7px 12px;
+      border: 1px solid #ddd;
+    }
+    .info-table tr:nth-child(even) td { background: #f4f7fb; }
+    .info-table tr:hover td { background: #eaf0fb; }
+
+    /* ─── Architecture Cards ───────────────────────────────────────────────── */
+    .arch-cards {
+      display: flex;
+      gap: 16px;
+      margin: 14px 0 18px 0;
+    }
+    .arch-card {
+      flex: 1;
+      border: 1.5px solid #1a3a6e;
+      border-radius: 6px;
+      padding: 16px 12px;
+      text-align: center;
+      background: #f4f7fb;
+    }
+    .arch-card .arch-num {
+      font-family: Arial, sans-serif;
+      font-size: 28pt;
+      font-weight: 700;
+      color: #1a3a6e;
+      line-height: 1;
+    }
+    .arch-card .arch-label {
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+      color: #333;
+      margin-top: 4px;
+    }
+
+    /* ─── Stage / Workflow Table ───────────────────────────────────────────── */
+    .stages-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 18px 0;
+      font-size: 10.5pt;
+    }
+    .stages-table th {
+      background: #1a3a6e;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 10.5pt;
+      padding: 9px 12px;
+      text-align: left;
+    }
+    .stages-table td {
+      padding: 7px 12px;
+      border: 1px solid #ddd;
+      vertical-align: top;
+    }
+    .stages-table tr:nth-child(even) td { background: #f4f7fb; }
+    .stage-name {
+      font-weight: bold;
+      color: #1a3a6e;
+      white-space: nowrap;
+    }
+    .stage-type-badge {
+      display: inline-block;
+      font-size: 8pt;
+      font-family: Arial, sans-serif;
+      padding: 1px 7px;
+      border-radius: 10px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .badge-primary { background: #1a3a6e; color: #fff; }
+    .badge-alternate { background: #c0392b; color: #fff; }
+    .step-list { margin: 4px 0 0 16px; padding: 0; }
+    .step-list li { margin-bottom: 2px; }
+
+    /* ─── Persona Cards ────────────────────────────────────────────────────── */
+    .persona-card {
+      border: 1px solid #c0cfe8;
+      border-left: 4px solid #1a3a6e;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      background: #f9fbff;
+    }
+    .persona-card .persona-name {
+      font-family: Arial, sans-serif;
+      font-size: 11.5pt;
+      font-weight: 700;
+      color: #1a3a6e;
+      margin-bottom: 4px;
+    }
+    .persona-card .persona-num {
+      display: inline-block;
+      background: #1a3a6e;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 9pt;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .persona-card p { margin: 0; font-size: 11pt; }
+
+    /* ─── Screenshot Placeholder ───────────────────────────────────────────── */
+    .screenshot-placeholder {
+      border: 2px dashed #999;
+      background: #f5f5f5;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 18px 0;
+      border-radius: 4px;
+      text-align: center;
+      padding: 16px;
+    }
+    .screenshot-placeholder .ph-icon {
+      font-size: 36pt;
+      color: #bbb;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .screenshot-placeholder .ph-label {
+      font-family: Arial, sans-serif;
+      font-size: 10.5pt;
+      font-weight: bold;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .screenshot-placeholder .ph-hint {
+      font-family: Arial, sans-serif;
+      font-size: 9pt;
+      color: #999;
+    }
+
+    /* ─── SLA / Config Items ───────────────────────────────────────────────── */
+    .config-block {
+      border: 1px solid #dde3ed;
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      background: #fafbfe;
+    }
+    .config-block .config-title {
+      font-family: Arial, sans-serif;
+      font-size: 11.5pt;
+      font-weight: 700;
+      color: #1a3a6e;
+      margin-bottom: 8px;
+    }
+    .config-block ul { margin-left: 20px; }
+    .config-block ul li { margin-bottom: 3px; font-size: 11pt; line-height: 1.6; }
+
+    /* ─── Conclusion Box ───────────────────────────────────────────────────── */
+    .conclusion-box {
+      border: 1.5px solid #1a3a6e;
+      border-radius: 5px;
+      padding: 18px 22px;
+      background: #f4f7fb;
+      margin-top: 14px;
+      line-height: 1.8;
+      font-size: 11.5pt;
+    }
+
+    /* ─── Divider ──────────────────────────────────────────────────────────── */
+    hr.section-divider {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 24px 0;
+    }
+
+    /* ─── Print / A4 Media ─────────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      .page {
+        width: 100%;
+        margin: 0;
+        padding: 2.5cm 2.5cm 3cm 2.5cm;
+        box-shadow: none;
+      }
+      .page-break { page-break-before: always; }
+      .no-break { page-break-inside: avoid; }
+      .instructions-banner { display: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    /* Screen-only page-break simulation */
+    .page-break {
+      border-top: 3px dashed #bbb;
+      margin: 36px 0 0 0;
+      padding-top: 36px;
+    }
+    .page-break::before {
+      content: "— page break —";
+      display: block;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      font-size: 8pt;
+      color: #bbb;
+      margin-top: -24px;
+      margin-bottom: 24px;
+    }
+    @media print {
+      .page-break::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  RUNNING HEADER                                             -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  INSTRUCTIONS BANNER                                        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="instructions-banner">
+    <strong>&#9432; Instructions for Use</strong>
+    <p>
+      Replace each <em>[Screenshot: …]</em> placeholder below with the actual screenshot from your Pega
+      Blueprint. To capture a screenshot on Windows, press <strong>Win + Shift + S</strong>, select the
+      area, then paste the image into the placeholder box. This banner will not appear when the document
+      is printed.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  COVER / TITLE BLOCK                                        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="cover-block no-break">
+    <div class="univ-label">Pega Blueprint — Assignment Submission</div>
+    <h1>Movie Ticket Booking<br>Management Application</h1>
+    <h2>Application Overview &amp; Configuration</h2>
+    <div class="cover-meta-table">
+      <table>
+        <tr><td>Student Name</td><td>Goutham Raj</td></tr>
+        <tr><td>Blueprint ID</td><td>BP-2412168</td></tr>
+        <tr><td>Application Name</td><td>Movie Ticket Request</td></tr>
+        <tr><td>Date</td><td>2026</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 1: APPLICATION OVERVIEW                            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="section-heading">Section 1 — Application Overview</div>
+
+  <table class="info-table no-break">
+    <tr><th>Field</th><th>Value</th></tr>
+    <tr><td>Blueprint ID</td><td>BP-2412168</td></tr>
+    <tr><td>Application Name</td><td>Movie Ticket Request</td></tr>
+    <tr><td>Description</td><td>Movie Ticket Booking Management Application</td></tr>
+    <tr><td>Organization</td><td>Internet Service Provider</td></tr>
+    <tr><td>Industry</td><td>Just for fun</td></tr>
+    <tr><td>Industry Subsegment</td><td>Other</td></tr>
+    <tr><td>Language</td><td>English</td></tr>
+  </table>
+
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 1: Pega Blueprint Summary Page —
+      https://www.pega.com/blueprint/BP-2412168/summary</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 2: APPLICATION ARCHITECTURE                        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <div class="section-heading">Section 2 — Application Architecture</div>
+
+  <p>
+    The application is structured around three core architectural pillars: Personas &amp; Channels,
+    a single Workflow, and two Data Objects. Together these components define the complete
+    operational scope of the Movie Ticket Request application within Pega Blueprint.
+  </p>
+
+  <div class="arch-cards no-break">
+    <div class="arch-card">
+      <div class="arch-num">5</div>
+      <div class="arch-label">Personas and Channels</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-num">1</div>
+      <div class="arch-label">Workflow<br><em style="font-size:9pt;font-weight:400;">Movie Ticket Request</em></div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-num">2</div>
+      <div class="arch-label">Data Objects<br><em style="font-size:9pt;font-weight:400;">Movie &amp; Show</em></div>
+    </div>
+  </div>
+
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 2: Application Architecture Overview</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 3: CASE LIFECYCLE                                  -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <div class="section-heading">Section 3 — Case Lifecycle: Workflow Details</div>
+
+  <p>
+    Step 3 of the Blueprint defines the Case Lifecycle for the <em>Movie Ticket Request</em> workflow.
+    The lifecycle consists of <strong>four primary stages</strong> and <strong>one alternate stage</strong>
+    to handle booking failures.
+  </p>
+
+  <table class="stages-table no-break">
+    <tr>
+      <th style="width:22%;">Stage</th>
+      <th style="width:14%;">Type</th>
+      <th>Steps / Processes</th>
+    </tr>
+    <tr>
+      <td class="stage-name">1. Initial Stage</td>
+      <td><span class="stage-type-badge badge-primary">Primary</span></td>
+      <td>
+        <ul class="step-list">
+          <li>Enter Movie Details</li>
+          <li>Capture Seat Preference</li>
+          <li>Validate Request Data</li>
+          <li>Send Confirmation</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="stage-name">2. Availability</td>
+      <td><span class="stage-type-badge badge-primary">Primary</span></td>
+      <td>
+        <ul class="step-list">
+          <li>Check Seat Availability</li>
+          <li>Suggest Alternatives</li>
+          <li>Confirm Selection</li>
+          <li>Notify Customer</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="stage-name">3. Approval</td>
+      <td><span class="stage-type-badge badge-primary">Primary</span></td>
+      <td>
+        <ul class="step-list">
+          <li>Book Seats</li>
+          <li>Process Payment</li>
+          <li>Generate Ticket</li>
+          <li>Send Ticket</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="stage-name">4. Resolution</td>
+      <td><span class="stage-type-badge badge-primary">Primary</span></td>
+      <td>
+        <ul class="step-list">
+          <li>Review Booking</li>
+          <li>Close Request</li>
+          <li>Notify Completion</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td class="stage-name">Failed Booking</td>
+      <td><span class="stage-type-badge badge-alternate">Alternate</span></td>
+      <td>
+        <ul class="step-list">
+          <li>Identify Issue</li>
+          <li>Notify Customer</li>
+          <li>Resubmit Request</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 3: Case Lifecycle — 4 Primary Stages + 1 Alternate Stage</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 4: DATA OBJECTS & INTEGRATIONS                     -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <div class="section-heading">Section 4 — Data Objects &amp; Integrations</div>
+
+  <p>
+    Step 4 of the Blueprint captures the data model and integration landscape. Both data objects
+    are stored locally within Pega, making the application self-contained with no external
+    system integrations at this stage.
+  </p>
+
+  <table class="info-table no-break">
+    <tr><th>#</th><th>Data Object</th><th>System of Record</th><th>Storage Type</th></tr>
+    <tr><td>1</td><td>Movie</td><td>Pega (Local)</td><td>Pega database</td></tr>
+    <tr><td>2</td><td>Show</td><td>Pega (Local)</td><td>Pega database</td></tr>
+  </table>
+
+  <table class="info-table no-break" style="margin-top:0;">
+    <tr><th>Metric</th><th>Count</th></tr>
+    <tr><td>Application Data Objects</td><td>2</td></tr>
+    <tr><td>Inbound Events</td><td>2</td></tr>
+    <tr><td>Integrations</td><td>0</td></tr>
+  </table>
+
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 4: Data Objects — Movie and Show</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 5: PERSONAS AND CHANNELS                           -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <div class="section-heading">Section 5 — Personas and Channels</div>
+
+  <p>
+    Step 5 of the Blueprint defines <strong>5 Personas</strong> that interact with the Movie Ticket
+    Request application. Each persona represents a distinct role with specific responsibilities
+    within the booking workflow.
+  </p>
+
+  <div class="persona-card no-break">
+    <div class="persona-name">
+      <span class="persona-num">1</span>Moviegoer
+    </div>
+    <p>
+      The Moviegoer is an individual who uses the application to search for movies, reserve tickets,
+      make payments, and receive booking confirmations. This persona benefits directly from the
+      application's streamlined booking process and ticket management features.
+    </p>
+  </div>
+
+  <div class="persona-card no-break">
+    <div class="persona-name">
+      <span class="persona-num">2</span>Box Office Agent
+    </div>
+    <p>
+      The Box Office Agent assists moviegoers with booking requests, verifies ticket availability,
+      and handles ticket issuance or cancellations. This persona interacts with the application
+      to process transactions and manage seating assignments.
+    </p>
+  </div>
+
+  <div class="persona-card no-break">
+    <div class="persona-name">
+      <span class="persona-num">3</span>Theater Manager
+    </div>
+    <p>
+      The Theater Manager oversees ticket inventory, manages show schedules, and monitors booking
+      statistics through the application. This persona ensures that ticket requests are fulfilled
+      efficiently and that all business rules are enforced.
+    </p>
+  </div>
+
+  <div class="persona-card no-break">
+    <div class="persona-name">
+      <span class="persona-num">4</span>Customer Support Representative
+    </div>
+    <p>
+      The Customer Support Representative responds to moviegoer inquiries, resolves booking issues,
+      and facilitates refunds or exchanges within the application. This persona provides high-touch
+      assistance, ensuring a positive user experience.
+    </p>
+  </div>
+
+  <div class="persona-card no-break">
+    <div class="persona-name">
+      <span class="persona-num">5</span>Application Control Agent
+    </div>
+    <p>
+      Manages system-level operations, monitors application performance, and ensures smooth
+      functioning of the booking platform.
+    </p>
+  </div>
+
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 5: All 5 Personas defined in Blueprint</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 6: SUMMARY PAGE                                    -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <div class="section-heading">Section 6 — Summary Page</div>
+
+  <p>Step 6 of the Blueprint presents the consolidated application summary confirming all configured components.</p>
+
+  <div class="sub-heading">Application Context</div>
+  <table class="info-table no-break">
+    <tr><th>Field</th><th>Value</th></tr>
+    <tr><td>Description</td><td>Movie Ticket Booking Management Application</td></tr>
+    <tr><td>Organization</td><td>Internet Service Provider</td></tr>
+    <tr><td>Industry</td><td>Just for fun</td></tr>
+    <tr><td>Industry Subsegment</td><td>Other</td></tr>
+    <tr><td>Language</td><td>English</td></tr>
+  </table>
+
+  <div class="sub-heading">Application Architecture Summary</div>
+  <table class="info-table no-break">
+    <tr><th>Component</th><th>Count</th></tr>
+    <tr><td>Personas and Channels</td><td>5</td></tr>
+    <tr><td>Workflow</td><td>1</td></tr>
+    <tr><td>Data Objects</td><td>2</td></tr>
+  </table>
+
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 6: Blueprint Summary Page — Step 6</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 7: ADDITIONAL CONFIGURATION                        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <div class="section-heading">Section 7 — Additional Configuration (App Studio)</div>
+
+  <p>
+    The following configurations are to be completed in Pega App Studio after generating the
+    application from the Blueprint. Each subsection corresponds to a specific configuration
+    activity within the platform.
+  </p>
+
+  <!-- 7.1 SLA -->
+  <div class="sub-heading">7.1 — SLA Configuration</div>
+  <div class="config-block no-break">
+    <div class="config-title">Service Level Agreement (SLA) Settings</div>
+    <ul>
+      <li><strong>Goal:</strong> 1 Day — the target time within which a booking case should be resolved.</li>
+      <li><strong>Deadline:</strong> 2 Days — the maximum time allowed before the case is escalated.</li>
+    </ul>
+  </div>
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 7: SLA Configuration</div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- 7.2 Work Queue Routing -->
+  <div class="sub-heading">7.2 — Work Queue Routing</div>
+  <div class="config-block no-break">
+    <div class="config-title">Routing Rules</div>
+    <ul>
+      <li><strong>Premium Show</strong> → <code>PremiumShowQueue</code></li>
+      <li><strong>Standard Show</strong> → <code>StandardShowQueue</code></li>
+    </ul>
+  </div>
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 8: Work Queue Routing Rule</div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- 7.3 Email Correspondence -->
+  <div class="sub-heading">7.3 — Email Correspondence</div>
+  <div class="config-block no-break">
+    <div class="config-title">Email Notification Settings</div>
+    <ul>
+      <li><strong>Trigger:</strong> Triggered on case resolution.</li>
+      <li><strong>Recipient:</strong> Sent to customer email address on file.</li>
+    </ul>
+  </div>
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 9: Email Correspondence Setup</div>
+  </div>
+
+  <hr class="section-divider" />
+
+  <!-- 7.4 Test Case Execution -->
+  <div class="sub-heading">7.4 — Test Case Execution</div>
+  <p>
+    A live test case is executed to verify the end-to-end booking workflow, confirming
+    the transition from <em>Open</em> status to <em>In-Progress</em> status within the Pega application.
+  </p>
+  <div class="screenshot-placeholder no-break">
+    <div class="ph-icon">&#128247;</div>
+    <div class="ph-label">[Screenshot: paste here]</div>
+    <div class="ph-hint">Screenshot 10: Live Test Case Running (Open → In-Progress)</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  SECTION 8: CONCLUSION                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="page-break"></div>
+
+  <div class="running-header">
+    <span class="doc-title">Movie Ticket Request — Pega Blueprint Submission</span>
+    <span class="doc-id">BP-2412168 | Goutham Raj | 2026</span>
+  </div>
+
+  <div class="section-heading">Section 8 — Conclusion</div>
+
+  <div class="conclusion-box no-break">
+    <p>
+      The <strong>Movie Ticket Request</strong> application, designed and configured using the
+      <strong>Pega Blueprint</strong> platform (Blueprint ID: <strong>BP-2412168</strong>), demonstrates
+      a complete, end-to-end ticket booking management solution. The application defines a clear
+      case lifecycle with four primary stages — Initial, Availability, Approval, and Resolution —
+      and one alternate stage to handle failed bookings gracefully.
+    </p>
+    <p>
+      Five distinct personas ensure that every stakeholder in the booking process — from the
+      Moviegoer to the Application Control Agent — has a well-defined role within the system.
+      The two data objects (Movie and Show), both managed locally within Pega, provide a
+      self-contained data model suited for rapid deployment and iteration.
+    </p>
+    <p>
+      Additional configurations including SLA rules, work queue routing, and automated email
+      correspondence further enhance the operational readiness of the application. The successful
+      execution of the live test case confirms that the workflow transitions correctly from
+      <em>Open</em> to <em>In-Progress</em>, validating the core booking process. This submission
+      reflects a thorough understanding of Pega Blueprint principles and low-code application design.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  RUNNING FOOTER                                             -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="running-footer">
+    <span>Blueprint ID: BP-2412168 | Goutham Raj | 2026</span>
+    <span>Movie Ticket Booking Management Application</span>
+  </div>
+
+</div><!-- /.page -->
+</body>
+</html>
